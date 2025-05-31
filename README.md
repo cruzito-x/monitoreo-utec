@@ -41,28 +41,39 @@ monitoreo-utec
 │  ├─ App.jsx
 │  ├─ assets
 │  │  └─ img
-│  │     └─ logo-utec.png
+│  │     ├─ cars
+│  │     │  ├─ free.webp
+│  │     │  ├─ ocuppied.webp
+│  │     │  └─ out-of-service.webp
+│  │     └─ utec
+│  │        ├─ bottom.jpg
+│  │        ├─ bottom.webp
+│  │        ├─ logo-utec-2.webp
+│  │        └─ logo-utec.webp
 │  ├─ components
+│  │  ├─ bottom
+│  │  │  └─ Bottom.jsx
 │  │  ├─ button
 │  │  │  └─ Button.jsx
+│  │  ├─ cards
+│  │  │  └─ Cards.jsx
 │  │  ├─ footer
 │  │  │  └─ Footer.jsx
-│  │  └─ logo
-│  │     └─ Logo.jsx
+│  │  ├─ logo
+│  │  │  ├─ Logo.jsx
+│  │  │  └─ Logo2.jsx
+│  │  ├─ parking
+│  │  │  └─ Parking.jsx
+│  │  └─ top
+│  │     └─ Top.jsx
 │  ├─ main.jsx
 │  └─ views
 │     ├─ check-voucher
-│     │  ├─ CheckVoucher.jsx
-│     │  └─ styles
-│     │     └─ checkvoucher.css
+│     │  └─ CheckVoucher.jsx
 │     ├─ home
-│     │  ├─ Home.jsx
-│     │  └─ styles
-│     │     └─ home.css
+│     │  └─ Home.jsx
 │     └─ login
-│        ├─ Login.jsx
-│        └─ styles
-│           └─ login.css
+│        └─ Login.jsx
 └─ vite.config.js
 
 ```
