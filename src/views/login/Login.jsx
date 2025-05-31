@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import $ from "jquery";
+import { IMaskInput } from "react-imask";
+import { useRef } from "react";
 import Button from "../../components/button/Button";
 import Footer from "../../components/footer/Footer";
 import Logo from "../../components/logo/Logo";
 
 const Login = () => {
   const navigate = useNavigate();
+  const ref = useRef(null);
+  const usernameRef = useRef(null);
 
   const login = (event) => {
     event.preventDefault();
@@ -15,13 +19,13 @@ const Login = () => {
     const password = $("#password").val();
 
     Swal.fire({
-      icon: "success",
-      text: `Bienvenid@ ${username}, a continuación deberá validar su voucher de estacionamiento.`,
+      icon: "info",
+      text: `Bienvenid@ ${username}, a continuación se validará si posee vales de estacionamiento.`,
       confirmButtonColor: "var(--primary-color)",
       confirmButtonText: "Aceptar",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate("/check-voucher");
+        navigate("/home");
       }
     });
   };
@@ -41,10 +45,18 @@ const Login = () => {
               >
                 Usuario
               </label>
-              <input
-                type="text"
-                id="username"
+              <IMaskInput
                 className="w-full px-3 py-3 bg-white rounded placeholder:text-slate-400 text-black"
+                mask={"##-####-####"}
+                definitions={{
+                  "#": /[0-9]/,
+                }}
+                radix="."
+                value=""
+                unmask={true}
+                ref={ref}
+                inputRef={usernameRef}
+                id="username"
                 placeholder="xx-xxxx-xxxx"
               />
             </div>
@@ -59,7 +71,7 @@ const Login = () => {
                 type="password"
                 id="password"
                 className="w-full px-3 py-3 bg-white rounded placeholder:text-slate-400 text-black"
-                placeholder="**********"
+                placeholder="• • • • • • • • • •"
               />
             </div>
             <Button
