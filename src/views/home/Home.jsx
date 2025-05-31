@@ -7,9 +7,9 @@ const Home = () => {
   return (
     <>
       <Top />
-      <div className="flex items-center px-10 py-16">
+      <div className="flex items-center px-10">
         <Cards />
-        <Parking />
+        {/* <Parking /> */}
       </div>
       <Bottom />
     </>
