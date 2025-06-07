@@ -5,14 +5,15 @@ import Top from "../../components/top/Top";
 
 const Home = () => {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Top />
-      <div className="flex items-center px-10">
+
+      <main className="flex-1 px-10 py-8">
         <Cards />
         {/* <Parking /> */}
-      </div>
+      </main>
       <Bottom />
-    </>
+    </div>
   );
 };
 

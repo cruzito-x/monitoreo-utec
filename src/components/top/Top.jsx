@@ -43,7 +43,7 @@ const Top = () => {
               <img
                 src="https://i.pravatar.cc/40"
                 alt="User avatar"
-                className="w-40 lg:w-20 md:w-20 sm:w-20 rounded-full border-2 cursor-pointer border-slate-300 hover:border-red-900 transition duration-200"
+                className="w-40 lg:w-14 md:w-20 sm:w-20 rounded-full border-2 cursor-pointer border-slate-300 hover:border-red-900 transition duration-200"
               />
             </button>
 
