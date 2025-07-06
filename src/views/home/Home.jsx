@@ -1,18 +1,26 @@
 import Bottom from "../../components/bottom/Bottom";
 import Cards from "../../components/cards/Cards";
 import Parking from "../../components/parking/Parking";
+import Stats from "../../components/stats/Stats";
 import Top from "../../components/top/Top";
 
 const Home = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Top />
 
-      <main className="flex-1 px-4 sm:px-6 lg:px-10 py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <Cards />
-          <div className="flex">
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 xl:px-24 py-5">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-5">
+          <div className="w-full lg:max-w-sm">
+            <Cards />
+          </div>
+
+          <div className="flex-1 w-full min-w-0 overflow-x-auto lg:overflow-visible">
             <Parking />
+          </div>
+
+          <div className="w-full lg:max-w-sm">
+            <Stats />
           </div>
         </div>
       </main>

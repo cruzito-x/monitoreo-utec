@@ -1,40 +1,56 @@
+import { Car, CheckCircle, AlertTriangle } from "lucide-react";
+
 const Cards = () => {
   const cardData = [
     {
-      number: 16,
-      label: "Disponibles",
-      bgColor: "bg-secondary",
-    },
-    {
-      number: 13,
+      number: 15,
       label: "Ocupados",
-      bgColor: "bg-primary",
+      description: "Espacios en uso",
+      icon: <Car className="text-red-600" size={20} />,
+      borderColor: "border-red-200",
+      textColor: "text-red-800",
+      bgColor: "bg-red-50",
     },
     {
-      number: 2,
-      label: "Bloqueados",
-      bgColor: "bg-thirdary",
+      number: 19,
+      label: "Disponibles",
+      description: "Espacios libres",
+      icon: <CheckCircle className="text-emerald-600" size={20} />,
+      borderColor: "border-emerald-200",
+      textColor: "text-emerald-800",
+      bgColor: "bg-emerald-50",
+    },
+    {
+      number: 6,
+      label: "Obstruidos",
+      description: "Requiere atención",
+      icon: <AlertTriangle className="text-amber-600" size={20} />,
+      borderColor: "border-amber-200",
+      textColor: "text-amber-800",
+      bgColor: "bg-amber-50",
     },
   ];
 
   return (
-    <div className="flex lg:flex-col md:flex-row sm:flex-col items-center justify-center gap-6 sm:gap-6 lg:gap-12 w-full lg:w-2/12 my-5">
+    <div className="grid grid-cols-1 gap-4 w-full max-w-sm mx-auto mb-12 bg-white rounded-2xl shadow p-6">
+      <h2 className="text-lg font-semibold text-gray-900">
+        {" "}
+        Estado del Parqueo{" "}
+      </h2>
       {cardData.map((card, index) => (
         <div
           key={index}
-          className={`w-full max-w-xs sm:w-1/3 lg:w-full text-white rounded-xl shadow-lg cursor-pointer ${card.bgColor}`}
+          className={`border rounded-xl p-6 ${card.bgColor} ${card.borderColor} transition-all duration-200 cursor-pointer hover:scale-110`}
         >
-          <div className="p-6 text-center">
-            <h1 className="text-2xl sm:text-3xl font-black mb-2">
-              {card.number}
-            </h1>
+          <div className="flex justify-between items-center mb-3">
+            <h2 className={`font-semibold ${card.textColor}`}>{card.label}</h2>
+            {card.icon}
           </div>
-          <div className="bg-slate-50 rounded-b-xl w-full">
-            <div className="px-6 py-3 text-center">
-              <p className="text-sm sm:text-base text-black font-semibold">
-                {card.label}
-              </p>
-            </div>
+          <div className={`text-3xl font-bold mb-3 ${card.textColor}`}>
+            {card.number}
+          </div>
+          <div className={`text-sm font-medium ${card.textColor}`}>
+            {card.description}
           </div>
         </div>
       ))}

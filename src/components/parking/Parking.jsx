@@ -1,125 +1,188 @@
-import free from "../../assets/img/cars/free.webp";
-import occupied from "../../assets/img/cars/ocuppied.webp";
-import outOfService from "../../assets/img/cars/out-of-service.webp";
+import { Car, CheckCircle, AlertTriangle, Wifi, Gauge } from "lucide-react";
 
 const Parking = () => {
-  // Configuración de los espacios de estacionamiento
   const parkingSpaces = [
-    // Columna izquierda (vertical)
-    { id: 1, status: "free" },
-    { id: 2, status: "occupied" },
-    { id: 3, status: "free" },
-    { id: 4, status: "free" },
-    { id: 5, status: "occupied" },
-    { id: 6, status: "out of service" },
+    // Columna izquierda
+    { id: 1, status: "disponible" },
+    { id: 2, status: "ocupado" },
+    { id: 3, status: "disponible" },
+    { id: 4, status: "disponible" },
+    { id: 5, status: "ocupado" },
+    { id: 6, status: "obstruido" },
 
-    // Fila superior (horizontal)
-    { id: 7, status: "free" },
-    { id: 8, status: "free" },
-    { id: 9, status: "occupied" },
-    { id: 10, status: "occupied" },
-    { id: 11, status: "free" },
-    { id: 12, status: "free" },
-    { id: 13, status: "occupied" },
-    { id: 14, status: "free" },
-    { id: 15, status: "occupied" },
-    { id: 16, status: "free" },
-    { id: 17, status: "occupied" },
-    { id: 18, status: "free" },
+    // Fila superior
+    { id: 7, status: "disponible" },
+    { id: 8, status: "disponible" },
+    { id: 9, status: "ocupado" },
+    { id: 10, status: "ocupado" },
+    { id: 11, status: "disponible" },
+    { id: 12, status: "disponible" },
+    { id: 13, status: "ocupado" },
+    { id: 14, status: "disponible" },
+    { id: 15, status: "ocupado" },
+    { id: 16, status: "disponible" },
+    { id: 17, status: "ocupado" },
+    { id: 18, status: "disponible" },
 
-    // Fila inferior (horizontal)
-    { id: 19, status: "free" },
-    { id: 20, status: "occupied" },
-    { id: 21, status: "free" },
-    { id: 22, status: "occupied" },
-    { id: 23, status: "free" },
-    { id: 24, status: "occupied" },
-    { id: 25, status: "free" },
-    { id: 26, status: "occupied" },
-    { id: 27, status: "free" },
-    { id: 28, status: "occupied" },
-    { id: 29, status: "free" },
-    { id: 30, status: "occupied" },
+    // Fila inferior
+    { id: 19, status: "disponible" },
+    { id: 20, status: "ocupado" },
+    { id: 21, status: "disponible" },
+    { id: 22, status: "ocupado" },
+    { id: 23, status: "disponible" },
+    { id: 24, status: "ocupado" },
+    { id: 25, status: "disponible" },
+    { id: 26, status: "ocupado" },
+    { id: 27, status: "disponible" },
+    { id: 28, status: "ocupado" },
+    { id: 29, status: "disponible" },
+    { id: 30, status: "ocupado" },
   ];
 
-  const getStatusImage = (status) => {
+  const getStatusIcon = (status) => {
     switch (status) {
-      case "free":
-        return free;
-      case "occupied":
-        return occupied;
-      case "out of service":
-        return outOfService;
+      case "ocupado":
+        return <Car className="h-4 w-4 text-red-600" />;
+      case "disponible":
+        return <CheckCircle className="h-4 w-4 text-emerald-600" />;
+      case "obstruido":
+        return <AlertTriangle className="h-4 w-4 text-amber-600" />;
       default:
-        return free;
+        return null;
     }
   };
 
-  return (
-    <div className="container xl:mx-auto sm:mx-10 p-6 max-w-6xl">
-      <h1 className="text-4xl font-bold text-center mb-8 text-black">
-        PARQUEO ESTUDIANTIL
-      </h1>
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "ocupado":
+        return "bg-red-100 border-red-300 hover:bg-red-200";
+      case "disponible":
+        return "bg-emerald-100 border-emerald-300 hover:bg-emerald-200";
+      case "obstruido":
+        return "bg-amber-100 border-amber-300 hover:bg-amber-200";
+    }
+  };
 
+  const total = parkingSpaces.length;
+  const occupied = parkingSpaces.filter((s) => s.status === "ocupado").length;
+  const occupancyPercentage = Math.round((occupied / total) * 100);
+
+  return (
+    <div className="container xl:mx-auto sm:mx-10 max-w-5xl w-full bg-white rounded-2xl shadow p-6">
+      {/* ENCABEZADO estilo dashboard */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            Parqueo Estudiantil UTEC
+            <span className="text-sm font-normal text-gray-500">
+              ({total} espacios)
+            </span>
+          </h2>
+
+          <div className="flex items-center gap-4">
+            <div
+              className={`flex items-center gap-2 ${
+                occupancyPercentage < 75 ? "text-cyan-600" : "text-red-600"
+              }`}
+            >
+              <Gauge className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                {occupancyPercentage}% ocupado
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-green-600">
+              <Wifi className="h-4 w-4 animate-pulse" />
+              <span className="text-xs font-medium">En vivo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CONTENIDO del layout */}
       <div className="flex">
         {/* Columna izquierda */}
-        <div className="flex flex-col mr-4">
+        <div className="flex flex-col mr-4 gap-2">
           {parkingSpaces.slice(0, 6).map((space) => (
-            <div key={space.id}>
-              <div className="flex">
-                <div className="bg-yellow-500 p-1 my-5"></div>
-                <img
-                  key={space.id}
-                  src={getStatusImage(space.status)}
-                  className="w-20 h-auto object-contain rotate-90"
-                  alt={`Espacio ${space.status}`}
-                  title={`Espacio ${space.status}`}
-                />
-              </div>
+            <div
+              key={space.id}
+              className={`
+                aspect-square w-12 border-2 rounded-lg flex flex-col items-center justify-center 
+                transition-all duration-200 cursor-pointer hover:scale-105
+                ${getStatusStyle(space.status)}
+              `}
+              title={`Espacio ${space.id < 10 ? "0" + space.id : space.id} - ${
+                space.status
+              }`}
+            >
+              {getStatusIcon(space.status)}
+              <span className="text-xs font-medium mt-1">
+                {space.id < 10 ? "0" + space.id : space.id}
+              </span>
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col w-32 h-auto bg-gray-500 rounded" />
-
         {/* Área central */}
         <div className="flex flex-col items-center">
           {/* Fila superior */}
-          <div className="flex">
+          <div className="flex gap-2 mb-10">
             {parkingSpaces.slice(6, 18).map((space) => (
-              <div key={space.id}>
-                <div className="block">
-                  <div className="bg-yellow-500 p-1 mx-5"></div>
-                  <img
-                    src={getStatusImage(space.status)}
-                    className="w-20 h-auto object-contain rotate-180"
-                    alt={`Espacio ${space.status}`}
-                    title={`Espacio ${space.status}`}
-                  />
-                </div>
+              <div
+                key={space.id}
+                className={`
+                  aspect-square w-12 border-2 rounded-lg flex flex-col items-center justify-center 
+                  transition-all duration-200 cursor-pointer hover:scale-105
+                  ${getStatusStyle(space.status)}
+                `}
+                title={`Espacio ${
+                  space.id < 10 ? "0" + space.id : space.id
+                } - ${space.status}`}
+              >
+                {getStatusIcon(space.status)}
+                <span className="text-xs font-medium mt-1">
+                  {space.id < 10 ? "0" + space.id : space.id}
+                </span>
               </div>
             ))}
           </div>
-
-          {/* Calle (espacio gris) */}
-          <div className="w-full h-48 bg-gray-500 my-10 rounded-tr rounded-br" />
 
           {/* Fila inferior */}
-          <div className="flex">
+          <div className="flex gap-2">
             {parkingSpaces.slice(18).map((space) => (
-              <div key={space.id}>
-                <div className="block">
-                  <img
-                    src={getStatusImage(space.status)}
-                    className="w-20 h-auto object-contain"
-                    alt={`Espacio ${space.status}`}
-                    title={`Espacio ${space.status}`}
-                  />
-                  <div className="bg-yellow-500 p-1 mx-5"></div>
-                </div>
+              <div
+                key={space.id}
+                className={`
+                  aspect-square w-12 border-2 rounded-lg flex flex-col items-center justify-center 
+                  transition-all duration-200 cursor-pointer hover:scale-105
+                  ${getStatusStyle(space.status)}
+                `}
+                title={`Espacio ${
+                  space.id < 10 ? "0" + space.id : space.id
+                } - ${space.status}`}
+              >
+                {getStatusIcon(space.status)}
+                <span className="text-xs font-medium mt-1">
+                  {space.id < 10 ? "0" + space.id : space.id}
+                </span>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Leyenda */}
+      <div className="flex flex-wrap gap-6 mt-6 pt-4 border-t justify-center lg:justify-start">
+        <div className="flex items-center gap-2">
+          <Car className="h-4 w-4 text-red-600" />
+          <span className="text-sm text-gray-700">Ocupado</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <CheckCircle className="h-4 w-4 text-emerald-600" />
+          <span className="text-sm text-gray-700">Disponible</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <span className="text-sm text-gray-700">Obstruido</span>
         </div>
       </div>
     </div>
