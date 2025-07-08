@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Crown, Star, Award, Medal, Circle } from "lucide-react";
 
 const Stats = () => {
-  const [range, setRange] = useState("week");
-
   const popularSpaces = [
     { id: 1, name: "Space 31", usage: 10, avgTime: "32 min" },
     { id: 2, name: "Space 29", usage: 8, avgTime: "28 min" },
@@ -18,15 +15,6 @@ const Stats = () => {
     avgStay: "2h 51min",
     currentParked: 11,
   };
-
-  const balance = summary.entries - summary.exits;
-  const balanceColor = balance >= 0 ? "text-green-600" : "text-red-600";
-  const balanceBarColor = balance >= 0 ? "bg-green-500" : "bg-red-500";
-  const balanceLabel = `${balance >= 0 ? "+" : ""}${balance} autos`;
-  const balancePercentage =
-    summary.entries > 0
-      ? Math.min((Math.abs(balance) / summary.entries) * 100, 100)
-      : 0;
 
   const getIcon = (index) => {
     switch (index) {
@@ -46,7 +34,7 @@ const Stats = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 w-full max-w-sm mx-auto mb-12 bg-white rounded-2xl shadow p-6">
+    <div className="grid grid-cols-1 gap-4 w-full max-w-sm mx-auto bg-white rounded-2xl shadow p-6">
       <h2 className="text-lg font-semibold text-gray-900">
         Estadísticas del Parqueo
       </h2>
@@ -56,18 +44,6 @@ const Stats = () => {
           <h2 className="text-sm font-semibold text-gray-900">
             Top 5 Espacios Más Usados
           </h2>
-          <select
-            value={range}
-            onChange={(e) => setRange(e.target.value)}
-            className="text-sm border border-gray-300 cursor-pointer rounded-md px-2 py-1 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          >
-            <option value="day">Día</option>
-            <option value="week">Semana</option>
-            <option value="month">Mes</option>
-            <option value="quarter">Trimestre</option>
-            <option value="semester">Semestre</option>
-            <option value="year">Año</option>
-          </select>
         </div>
 
         <div className="mt-4 space-y-4">
@@ -82,7 +58,7 @@ const Stats = () => {
                 </div>
                 <div className="text-right text-xs text-gray-600">
                   <p>Usado {space.usage} veces</p>
-                  <p>Prom. {space.avgTime}</p>
+                  <p>Tiempo Promedio: {space.avgTime}</p>
                 </div>
               </div>
             </div>
@@ -97,22 +73,22 @@ const Stats = () => {
 
         <div className="p-6 space-y-4 text-sm text-gray-700">
           <div className="flex justify-between">
-            <span>Ingresos:</span>
-            <span className="text-green-600 font-semibold">
+            <span className="text-gray-900">Ingresos:</span>
+            <span className="text-emerald-600 font-semibold">
               {summary.entries} autos
             </span>
           </div>
 
           <div className="flex justify-between">
-            <span>Salidas:</span>
+            <span className="text-gray-900">Salidas:</span>
             <span className="text-red-600 font-semibold">
               {summary.exits} autos
             </span>
           </div>
 
           <div className="flex justify-between">
-            <span>Estancia promedio:</span>
-            <span className="text-purple-600 font-semibold">
+            <span className="text-gray-900">Estancia promedio:</span>
+            <span className="text-orange-600 font-semibold">
               {summary.avgStay}
             </span>
           </div>
@@ -120,25 +96,10 @@ const Stats = () => {
           <hr className="my-2 border-gray-200" />
 
           <div className="flex justify-between">
-            <span>Actualmente estacionados:</span>
+            <span className="text-gray-900">Estacionados actualmente:</span>
             <span className="text-blue-600 font-semibold">
               {summary.currentParked} autos
             </span>
-          </div>
-
-          <div>
-            <span className="text-gray-500 text-xs">Balance del día</span>
-            <div className="flex items-center mt-1 gap-2">
-              <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className={`${balanceBarColor} h-full`}
-                  style={{ width: `${balancePercentage}%` }}
-                ></div>
-              </div>
-              <span className={`text-xs font-medium ${balanceColor}`}>
-                {balanceLabel}
-              </span>
-            </div>
           </div>
         </div>
       </div>
