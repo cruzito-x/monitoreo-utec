@@ -46,9 +46,11 @@ const Top = () => {
             >
               <div className="flex items-center space-x-2">
                 <div className="text-start cursor-pointer">
-                  <span className="font-medium">
-                    Cruz Cruz David Alejandro <br />{" "}
-                    <span className="text-xs">25-1306-2020</span>
+                  <span className="font-semibold">
+                    Nombre del estudiante <br />{" "}
+                    <span className="text-xs font-normal">
+                      <span className="font-semibold">Carné:</span> 00-0000-0000
+                    </span>
                   </span>
                 </div>
                 <ChevronDown className="w-4 h-4 cursor-pointer" />

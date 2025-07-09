@@ -9,7 +9,7 @@ const Home = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Top />
 
-      <main className="flex-1 px-4 sm:px-6 lg:px-8 xl:px-24 py-5">
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 xl:px-24 mt-5">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-5">
           <div className="w-full lg:max-w-sm">
             <Cards />

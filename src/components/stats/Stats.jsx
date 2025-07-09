@@ -2,18 +2,18 @@ import { Crown, Star, Award, Medal, Circle } from "lucide-react";
 
 const Stats = () => {
   const popularSpaces = [
-    { id: 1, name: "Space 31", usage: 10, avgTime: "32 min" },
-    { id: 2, name: "Space 29", usage: 8, avgTime: "28 min" },
-    { id: 3, name: "Space 15", usage: 7, avgTime: "26 min" },
-    { id: 4, name: "Space 42", usage: 6, avgTime: "24 min" },
-    { id: 5, name: "Space 18", usage: 5, avgTime: "20 min" },
+    { id: 1, name: "Espacio 07", usage: 10, avgTime: "32 min" },
+    { id: 2, name: "Espacio 29", usage: 8, avgTime: "28 min" },
+    { id: 3, name: "Espacio 15", usage: 7, avgTime: "26 min" },
+    { id: 4, name: "Espacio 42", usage: 6, avgTime: "24 min" },
+    { id: 5, name: "Espacio 18", usage: 5, avgTime: "20 min" },
   ];
 
   const summary = {
     entries: 132,
     exits: 121,
     avgStay: "2h 51min",
-    currentParked: 11,
+    currentParked: 15,
   };
 
   const getIcon = (index) => {
@@ -74,21 +74,21 @@ const Stats = () => {
         <div className="p-6 space-y-4 text-sm text-gray-700">
           <div className="flex justify-between">
             <span className="text-gray-900">Ingresos:</span>
-            <span className="text-emerald-600 font-semibold">
+            <span className="text-blue-500 font-semibold">
               {summary.entries} autos
             </span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-gray-900">Salidas:</span>
-            <span className="text-red-600 font-semibold">
+            <span className="text-red-500 font-semibold">
               {summary.exits} autos
             </span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-gray-900">Estancia promedio:</span>
-            <span className="text-orange-600 font-semibold">
+            <span className="text-amber-500 font-semibold">
               {summary.avgStay}
             </span>
           </div>
@@ -97,7 +97,7 @@ const Stats = () => {
 
           <div className="flex justify-between">
             <span className="text-gray-900">Estacionados actualmente:</span>
-            <span className="text-blue-600 font-semibold">
+            <span className="text-rose-900 font-semibold">
               {summary.currentParked} autos
             </span>
           </div>
