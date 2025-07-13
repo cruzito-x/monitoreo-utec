@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import $ from "jquery";
 import { IMaskInput } from "react-imask";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import Button from "../../components/button/Button";
 import Footer from "../../components/footer/Footer";
 import Logo from "../../components/logo/Logo";
@@ -11,6 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
   const ref = useRef(null);
   const usernameRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const login = (event) => {
     event.preventDefault();
@@ -67,12 +69,22 @@ const Login = () => {
               >
                 Contraseña
               </label>
-              <input
-                type="password"
-                id="password"
-                className="w-full px-3 py-3 bg-white rounded placeholder:text-slate-400 text-black"
-                placeholder="• • • • • • • • • •"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="w-full px-3 py-3 bg-white rounded placeholder:text-slate-400 text-black pr-10"
+                  placeholder="• • • • • • • • • •"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 px-3 flex items-center cursor-pointer text-rose-900"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
             <Button
               text="Acceder"

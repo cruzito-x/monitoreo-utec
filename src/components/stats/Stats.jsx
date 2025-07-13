@@ -27,7 +27,7 @@ const Stats = () => {
       case 3:
         return <Medal className="w-5 h-5 text-indigo-400 mr-2" />;
       case 4:
-        return <Circle className="w-5 h-5 text-pink-400 mr-2" />;
+        return <Circle className="w-5 h-5 text-rose-400 mr-2" />;
       default:
         return null;
     }
