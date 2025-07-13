@@ -109,7 +109,7 @@ const Parking = ({ lotId = 1 }) => {
       {/* ENCABEZADO */}
       <div className="flex items-center justify-between pt-6 ps-6 pe-6">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-1">
-          Parqueo Estudiantil UTEC {lotId && ` - Lote ${lotId}`}
+          Parqueo Estudiantil UTEC
           <span className="text-sm font-normal text-gray-500">
             ({total > 0 ? total : 0} espacios)
           </span>
