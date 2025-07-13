@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Car, CheckCircle, AlertTriangle, Wifi, Gauge } from "lucide-react";
+import {
+  Car,
+  CheckCircle,
+  AlertTriangle,
+  Wifi,
+  Gauge,
+  Space,
+} from "lucide-react";
 import Loading from "../loading/Loading";
 
 const Parking = ({ lotId = 1 }) => {
@@ -46,7 +53,7 @@ const Parking = ({ lotId = 1 }) => {
   const getStatusStyle = (status_id) => {
     switch (status_id) {
       case 1:
-        return "bg-red-100 border-red-300 hover:bg-red-200";
+        return "bg-rose-100 border-rose-300 hover:bg-rose-200";
       case 2:
         return "bg-emerald-100 border-emerald-300 hover:bg-emerald-200";
       case 3:
@@ -70,11 +77,23 @@ const Parking = ({ lotId = 1 }) => {
         transform: `rotate(${space.rotation || 0}deg)`,
       }}
       title={`Espacio ${space.id < 10 ? "0" + space.id : space.id} - ${
-        space.status
+        space.status_id === 1
+          ? "Ocupado"
+          : space.status_id === 2
+          ? "Disponible"
+          : "Obstruido"
       }`}
     >
       {getStatusIcon(space.status_id)}
-      <span className="text-xs mt-0.5">
+      <span
+        className={`text-xs mt-0.5 ${
+          space.status_id === 1
+            ? "text-rose-900"
+            : space.status_id === 2
+            ? "text-emerald-900"
+            : "text-amber-900"
+        }`}
+      >
         {space.id < 10 ? "0" + space.id : space.id}
       </span>
     </div>
@@ -113,7 +132,7 @@ const Parking = ({ lotId = 1 }) => {
         </div>
       </div>
 
-      {/* MAPA DINÁMICO */}
+      {/* DISTRIBUCIÓN DINÁMICA */}
       <div className="relative w-full h-[520px] rounded-lg overflow-hidden">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
