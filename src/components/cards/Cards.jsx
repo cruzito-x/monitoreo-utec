@@ -1,9 +1,32 @@
 import { Car, CheckCircle, AlertTriangle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Cards = () => {
+  const [status, setStatus] = useState([]);
+
+  useEffect(() => {
+    const getParkingStatus = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/summary/`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "GET",
+        });
+
+        const data = await response.json();
+        setStatus(data);
+      } catch (error) {
+        console.error("Error al obtener estado del parqueo:", error);
+      }
+    };
+
+    getParkingStatus();
+  }, []);
+
   const cardData = [
     {
-      number: 15,
+      number: status[0]?.count || 0,
       label: "Ocupados",
       description: "Espacios en uso",
       icon: <Car className="text-red-600" size={20} />,
@@ -12,7 +35,7 @@ const Cards = () => {
       bgColor: "bg-red-50",
     },
     {
-      number: 19,
+      number: status[1]?.count || 0,
       label: "Disponibles",
       description: "Espacios libres",
       icon: <CheckCircle className="text-emerald-600" size={20} />,
@@ -21,7 +44,7 @@ const Cards = () => {
       bgColor: "bg-emerald-50",
     },
     {
-      number: 6,
+      number: status[2]?.count || 0,
       label: "Obstruidos",
       description: "Requiere atención",
       icon: <AlertTriangle className="text-amber-600" size={20} />,
@@ -32,7 +55,7 @@ const Cards = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 w-full max-w-sm mx-auto mb-12 bg-white rounded-2xl shadow p-6">
+    <div className="grid grid-cols-1 gap-4 w-full max-w-sm mx-auto mb-12 bg-white rounded-2xl shadow p-7">
       <h2 className="text-lg font-semibold text-gray-900">
         {" "}
         Estado del Parqueo{" "}
@@ -40,7 +63,7 @@ const Cards = () => {
       {cardData.map((card, index) => (
         <div
           key={index}
-          className={`border rounded-xl p-6 ${card.bgColor} ${card.borderColor} transition-all duration-200 cursor-pointer hover:scale-110`}
+          className={`border rounded-xl p-6 ${card.bgColor} ${card.borderColor} transition-all duration-200 cursor-pointer hover:scale-105`}
         >
           <div className="flex justify-between items-center mb-3">
             <h2 className={`font-semibold ${card.textColor}`}>{card.label}</h2>

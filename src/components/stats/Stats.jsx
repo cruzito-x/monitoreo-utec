@@ -71,7 +71,7 @@ const Stats = () => {
           Resumen del día
         </h2>
 
-        <div className="p-6 space-y-4 text-sm text-gray-700">
+        <div className="pt-6 pb-6 space-y-4 text-sm text-gray-700">
           <div className="flex justify-between">
             <span className="text-gray-900">Ingresos:</span>
             <span className="text-blue-500 font-semibold">
