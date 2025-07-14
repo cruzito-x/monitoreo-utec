@@ -4,7 +4,7 @@ import Logo2 from "../../components/logo/Logo2";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
-const Top = () => {
+const Top = ({ carnet, user_name }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -47,9 +47,9 @@ const Top = () => {
               <div className="flex items-center space-x-2">
                 <div className="text-start cursor-pointer">
                   <span className="font-semibold">
-                    Nombre del estudiante <br />{" "}
+                    {user_name} <br />{" "}
                     <span className="text-xs font-normal">
-                      <span className="font-semibold">Carné:</span> 00-0000-0000
+                      <span className="font-semibold">Carné:</span> {carnet}
                     </span>
                   </span>
                 </div>

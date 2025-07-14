@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import Bottom from "../../components/bottom/Bottom";
 import Cards from "../../components/cards/Cards";
 import Parking from "../../components/parking/Parking";
@@ -5,9 +6,12 @@ import Stats from "../../components/stats/Stats";
 import Top from "../../components/top/Top";
 
 const Home = () => {
+  const location = useLocation();
+  const { carnet, user_name } = location.state || {};
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Top />
+      <Top carnet={carnet} user_name={user_name} />
 
       <main className="flex-1 px-4 sm:px-6 lg:px-8 xl:px-4 mt-5">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-5">

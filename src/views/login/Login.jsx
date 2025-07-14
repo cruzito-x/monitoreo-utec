@@ -51,7 +51,12 @@ const Login = () => {
         }).then((result) => {
           if (data.has_vouchers === 1) {
             if (result.isConfirmed) {
-              navigate("/home");
+              navigate("/home", {
+                state: {
+                  carnet: data.carnet,
+                  user_name: data.user_name,
+                },
+              });
             }
           } else {
             Swal.fire({
@@ -72,6 +77,8 @@ const Login = () => {
           confirmButtonText: "Aceptar",
         });
       }
+
+      clear();
     } catch (error) {
       console.error("Error al inicializar el login:", error);
       Swal.fire({
@@ -81,6 +88,11 @@ const Login = () => {
         confirmButtonText: "Aceptar",
       });
     }
+  };
+
+  const clear = () => {
+    $("#carnet").val("");
+    $("#password").val("");
   };
 
   return (
