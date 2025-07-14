@@ -1,5 +1,6 @@
-import { Car, CheckCircle, AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Car, CheckCircle, AlertTriangle } from "lucide-react";
+import Swal from "sweetalert2";
 
 const Cards = () => {
   const [status, setStatus] = useState([]);
@@ -15,7 +16,17 @@ const Cards = () => {
         });
 
         const data = await response.json();
-        setStatus(data);
+
+        if (response.status === 200) {
+          setStatus(data);
+        } else if (response.status === 404 || response.status === 500) {
+          Swal.fire({
+            icon: "warning",
+            text: "Ha ocurrido un error al obtener la distribución del parqueo, por favor salga y vuelve a intentarlo.",
+            confirmButtonColor: "var(--primary-color)",
+            confirmButtonText: "Aceptar",
+          });
+        }
       } catch (error) {
         console.error("Error al obtener estado del parqueo:", error);
       }

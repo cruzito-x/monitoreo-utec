@@ -1,8 +1,8 @@
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import $ from "jquery";
 import { IMaskInput } from "react-imask";
-import { useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Button from "../../components/button/Button";
 import Footer from "../../components/footer/Footer";
@@ -11,25 +11,76 @@ import Logo from "../../components/logo/Logo";
 const Login = () => {
   const navigate = useNavigate();
   const ref = useRef(null);
-  const usernameRef = useRef(null);
+  const carnetRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const login = (event) => {
+  const login = async (event) => {
     event.preventDefault();
 
-    const username = $("#username").val();
+    const carnet = $("#carnet").val().replace(/-/g, "");
     const password = $("#password").val();
 
-    Swal.fire({
-      icon: "info",
-      text: `Bienvenid@ ${username}, a continuación se validará si posee vales de estacionamiento.`,
-      confirmButtonColor: "var(--primary-color)",
-      confirmButtonText: "Aceptar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate("/home");
+    if (!carnet || !password) {
+      Swal.fire({
+        icon: "error",
+        text: "Por favor, complete todos los campos.",
+        confirmButtonColor: "var(--primary-color)",
+        confirmButtonText: "Aceptar",
+      });
+
+      return false;
+    }
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/login/", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ carnet, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "info",
+          text: `Bienvenid@ ${data.user_name}, a continuación se validará si posee vales de estacionamiento.`,
+          confirmButtonColor: "var(--primary-color)",
+          confirmButtonText: "Aceptar",
+        }).then((result) => {
+          if (data.has_vouchers === 1) {
+            if (result.isConfirmed) {
+              navigate("/home");
+            }
+          } else {
+            Swal.fire({
+              icon: "info",
+              text: "No posee vales de estacionamiento, por favor solicite uno en colecturía.",
+              confirmButtonColor: "var(--primary-color)",
+              confirmButtonText: "Aceptar",
+            }).then(() => {
+              navigate("/");
+            });
+          }
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          text: "Usuario o contraseña incorrectos.",
+          confirmButtonColor: "var(--primary-color)",
+          confirmButtonText: "Aceptar",
+        });
       }
-    });
+    } catch (error) {
+      console.error("Error al inicializar el login:", error);
+      Swal.fire({
+        icon: "error",
+        text: "Ocurrió un error al intentar iniciar sesión.",
+        confirmButtonColor: "var(--primary-color)",
+        confirmButtonText: "Aceptar",
+      });
+    }
   };
 
   return (
@@ -43,7 +94,7 @@ const Login = () => {
             <div className="mb-6">
               <label
                 className="block text-white font-medium mb-2"
-                htmlFor="username"
+                htmlFor="carnet"
               >
                 Usuario
               </label>
@@ -57,8 +108,8 @@ const Login = () => {
                 value=""
                 unmask={true}
                 ref={ref}
-                inputRef={usernameRef}
-                id="username"
+                inputRef={carnetRef}
+                id="carnet"
                 placeholder="xx-xxxx-xxxx"
               />
             </div>
