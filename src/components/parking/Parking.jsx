@@ -70,15 +70,15 @@ const Parking = ({ lotId = 1 }) => {
   const renderSpace = (space) => (
     <div
       key={space.id}
-      className={`absolute aspect-square w-11 rounded-lg border-2 flex flex-col items-center justify-center
+      className={`absolute aspect-square w-${
+        space.width
+      } rounded-lg border-2 flex flex-col items-center justify-center
         transition-all duration-200 cursor-pointer hover:scale-105 text-xs
         ${getStatusStyle(space.status_id)}`}
       style={{
         top: `${space.y}px`,
         left: `${space.x}px`,
-        width: `${space.width}`,
-        height: `${space.height}`,
-        transform: `rotate(${space.rotation || 0}deg)`,
+        transform: `rotate(${space.rotation}deg)`,
       }}
       title={`Espacio ${space.id < 10 ? "0" + space.id : space.id} - ${
         space.status_id === 1
