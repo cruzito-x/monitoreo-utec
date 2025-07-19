@@ -6,6 +6,7 @@ import Loading from "../loading/Loading";
 const Parking = ({ lotId = 1 }) => {
   const [spaces, setSpaces] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [transmitionStatus, setTransmitionStatus] = useState(true);
 
   useEffect(() => {
     const getParkingDistribution = async () => {
@@ -23,22 +24,79 @@ const Parking = ({ lotId = 1 }) => {
 
         if (response.status === 200) {
           setSpaces(data);
+          setTransmitionStatus(true);
         } else if (response.status === 404 || response.status === 500) {
           Swal.fire({
             icon: "warning",
-            text: "Ha ocurrido un error al obtener la distribución del parqueo, por favor salga y vuelve a intentarlo.",
+            text: "Ha ocurrido un error interno, por favor cierre su sesión y vuelva a intentarlo.",
             confirmButtonColor: "var(--primary-color)",
             confirmButtonText: "Aceptar",
           });
         }
       } catch (error) {
-        console.error("Error al obtener distribución del parqueo:", error);
       } finally {
         setLoading(false);
+        setTransmitionStatus(false);
       }
     };
 
     getParkingDistribution();
+
+    // WebSocket connection to receive live updates
+    const socket = new WebSocket("ws://localhost:8000/ws/parking/");
+
+    socket.onmessage = (event) => {
+      const incoming = JSON.parse(event.data);
+      const updatedSpaces = Array.isArray(incoming) ? incoming : [incoming];
+
+      setSpaces((prevSpaces) => {
+        const updated = [...prevSpaces];
+        updatedSpaces.forEach((incoming) => {
+          const index = updated.findIndex((s) => s.id === incoming.id);
+          if (index !== -1) {
+            updated[index] = incoming;
+          }
+        });
+        return updated;
+      });
+
+      // Show notification if permission is granted and a service worker is available
+      if (
+        Notification.permission === "granted" &&
+        navigator.serviceWorker.controller
+      ) {
+        const space = updatedSpaces[0];
+        const title = `Espacio ${space.id < 10 ? "0" + space.id : space.id}`;
+        const statusText =
+          space.status_id === 1
+            ? "Ocupado"
+            : space.status_id === 2
+            ? "Disponible"
+            : "Obstruido";
+
+        navigator.serviceWorker.controller.postMessage({
+          title: "Parqueo UTEC",
+          options: {
+            body: `${title} ahora está ${statusText.toLowerCase()}.`,
+            icon: "/logo.png",
+            badge: "/logo.png",
+            vibrate: [100, 50, 100],
+          },
+        });
+      }
+    };
+
+    socket.onerror = () => {
+      console.error("WebSocket error occurred");
+      setTransmitionStatus(false);
+    };
+
+    socket.onclose = () => {
+      setTransmitionStatus(false);
+    };
+
+    // Clear WebSocket connection on component unmount
+    return () => socket.close();
   }, [lotId]);
 
   const getStatusIcon = (status_id) => {
@@ -70,14 +128,14 @@ const Parking = ({ lotId = 1 }) => {
   const renderSpace = (space) => (
     <div
       key={space.id}
-      className={`absolute aspect-square w-${
-        space.width
-      } rounded-lg border-2 flex flex-col items-center justify-center
+      className={`absolute aspect-square rounded-lg border-2 flex flex-col items-center justify-center
         transition-all duration-200 cursor-pointer hover:scale-105 text-xs
         ${getStatusStyle(space.status_id)}`}
       style={{
         top: `${space.y}px`,
         left: `${space.x}px`,
+        width: `${space.width}px`,
+        height: `${space.height}px`,
         transform: `rotate(${space.rotation}deg)`,
       }}
       title={`Espacio ${space.id < 10 ? "0" + space.id : space.id} - ${
@@ -129,9 +187,20 @@ const Parking = ({ lotId = 1 }) => {
               {occupancyPercentage > 0 ? occupancyPercentage : 0}% ocupado
             </span>
           </div>
-          <div className="flex items-center gap-1 text-green-600">
-            <Wifi className="h-4 w-4 animate-pulse" />
-            <span className="text-xs font-medium">En vivo</span>
+          <div className="flex items-center gap-1">
+            {transmitionStatus ? (
+              <Wifi className="h-4 w-4 animate-pulse text-green-600" />
+            ) : (
+              <Wifi className="h-4 w-4" />
+            )}
+            <span className="text-xs font-medium">
+              {" "}
+              {transmitionStatus ? (
+                <span className="text-green-600"> En Vivo </span>
+              ) : (
+                <span className="text-red-600"> Sin conexión </span>
+              )}
+            </span>
           </div>
         </div>
       </div>
