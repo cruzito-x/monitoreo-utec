@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { Car, CheckCircle, AlertTriangle, Wifi, Gauge } from "lucide-react";
+import {
+  Car,
+  CheckCircle,
+  AlertTriangle,
+  Wifi,
+  Gauge,
+  WifiOff,
+} from "lucide-react";
 import Loading from "../loading/Loading";
 
 const Parking = ({ lotId = 1 }) => {
@@ -34,9 +41,9 @@ const Parking = ({ lotId = 1 }) => {
           });
         }
       } catch (error) {
+        setTransmitionStatus(false);
       } finally {
         setLoading(false);
-        setTransmitionStatus(false);
       }
     };
 
@@ -84,6 +91,8 @@ const Parking = ({ lotId = 1 }) => {
           },
         });
       }
+
+      setTransmitionStatus(true);
     };
 
     socket.onerror = () => {
@@ -191,7 +200,7 @@ const Parking = ({ lotId = 1 }) => {
             {transmitionStatus ? (
               <Wifi className="h-4 w-4 animate-pulse text-green-600" />
             ) : (
-              <Wifi className="h-4 w-4" />
+              <WifiOff className="h-4 w-4 animate-pulse text-red-600" />
             )}
             <span className="text-xs font-medium">
               {" "}
