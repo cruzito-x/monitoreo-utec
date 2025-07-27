@@ -59,7 +59,9 @@ const Parking = ({ lotId = 1 }) => {
       setSpaces((prevSpaces) => {
         const updated = [...prevSpaces];
         updatedSpaces.forEach((incoming) => {
-          const index = updated.findIndex((s) => s.id === incoming.id);
+          const index = updated.findIndex(
+            (status) => status.id === incoming.id
+          );
           if (index !== -1) {
             updated[index] = incoming;
           }
@@ -172,7 +174,7 @@ const Parking = ({ lotId = 1 }) => {
 
   const total = spaces.length;
   const occupied =
-    total > 0 ? spaces.filter((s) => s.status_id === 3).length : 0;
+    total > 0 ? spaces.filter((s) => s.status_id === 1).length : 0;
   const occupancyPercentage = total ? Math.round((occupied / total) * 100) : 0;
 
   return (

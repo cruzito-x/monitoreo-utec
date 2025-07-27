@@ -12,6 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
   const ref = useRef(null);
   const carnetRef = useRef(null);
+  const [carnet, setCarnet] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const login = async (event) => {
@@ -117,7 +118,8 @@ const Login = () => {
                   "#": /[0-9]/,
                 }}
                 radix="."
-                value=""
+                value={carnet}
+                onAccept={(value) => setCarnet(value)}
                 unmask={true}
                 ref={ref}
                 inputRef={carnetRef}

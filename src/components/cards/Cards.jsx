@@ -37,7 +37,7 @@ const Cards = () => {
 
   const cardData = [
     {
-      number: status[0]?.count || 0,
+      number: status[2]?.count || 0,
       label: "Ocupados",
       description: "Espacios en uso",
       icon: <Car className="text-rose-600" size={20} />,
@@ -46,7 +46,7 @@ const Cards = () => {
       bgColor: "bg-rose-50",
     },
     {
-      number: status[1]?.count || 0,
+      number: status[0]?.count || 0,
       label: "Disponibles",
       description: "Espacios libres",
       icon: <CheckCircle className="text-emerald-600" size={20} />,
@@ -55,7 +55,7 @@ const Cards = () => {
       bgColor: "bg-emerald-50",
     },
     {
-      number: status[2]?.count || 0,
+      number: status[1]?.count || 0,
       label: "Obstruidos",
       description: "Requiere atención",
       icon: <AlertTriangle className="text-amber-600" size={20} />,

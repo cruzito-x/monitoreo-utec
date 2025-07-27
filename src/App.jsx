@@ -10,13 +10,11 @@ function App() {
     if ("serviceWorker" in navigator && "Notification" in window) {
       navigator.serviceWorker
         .register("/sw.js")
-        .then((registration) => {
-          console.log("✅ Service Worker registrado:", registration);
-
-          // Solicita permiso de notificaciones
+        .then(() => {
+          // Request notification permission
           Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
-              console.log("🔔 Permiso de notificaciones concedido");
+              console.log("Permiso de notificaciones concedido");
             }
           });
         })
