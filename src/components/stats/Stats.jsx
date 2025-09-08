@@ -53,38 +53,44 @@ const Stats = ({ lotId = 1 }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 w-full max-w-sm mx-auto bg-white rounded-2xl shadow p-6">
+    <div className="grid grid-cols-1 gap-4 w-11/12 bg-white rounded-2xl shadow p-6 mb-3">
       <h2 className="text-lg font-semibold text-gray-900">
         Estadísticas del Parqueo
       </h2>
 
-      <div className="max-w-3xl flex flex-col">
+      <div className="max-w-2xl flex flex-col">
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-semibold text-gray-900">
             Top 5 Espacios Más Usados
           </h2>
         </div>
 
-        <div className="mt-4 space-y-4">
-          {popularSpaces.map((space, index) => (
-            <div key={space.id} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  {getIcon(index)}
-                  <h3 className="font-light text-sm text-gray-900">
-                    {space.name}
-                  </h3>
-                </div>
-                <div className="text-right text-xs text-gray-600">
-                  <p>Usado {space.usage} veces</p>
-                  <p>Tiempo Promedio: {space.avgTime}</p>
+        {popularSpaces.length > 0 ? (
+          <div className="mt-4 space-y-4">
+            {popularSpaces.map((space, index) => (
+              <div key={space.id} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    {getIcon(index)}
+                    <h3 className="font-light text-sm text-gray-900">
+                      {space.name}
+                    </h3>
+                  </div>
+                  <div className="text-right text-xs text-gray-600">
+                    <p>Usado {space.usage} veces</p>
+                    <p>Tiempo Promedio: {space.avgTime}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-gray-500 mt-4 mb-2 text-sm flex justify-center">
+            No hay datos disponibles
+          </div>
+        )}
 
-        <div className="border-b py-1.5 border-gray-500"></div>
+        <div className="border-b pt-4 border-gray-300"></div>
 
         <h2 className="mt-5 text-sm font-semibold text-gray-900">
           Resumen del día

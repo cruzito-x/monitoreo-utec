@@ -42,6 +42,7 @@ const Parking = ({ lotId = 1 }) => {
         }
       } catch (error) {
         setTransmitionStatus(false);
+        console.error("Error al obtener distribución del parqueo:", error);
       } finally {
         setLoading(false);
       }
@@ -217,7 +218,7 @@ const Parking = ({ lotId = 1 }) => {
       </div>
 
       {/* DISTRIBUCIÓN DINÁMICA */}
-      <div className="relative w-full h-[520px] rounded-lg overflow-hidden">
+      <div className="relative w-full h-[520px] rounded-lg overflow-auto">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
             <Loading />
