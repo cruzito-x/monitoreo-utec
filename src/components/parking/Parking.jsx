@@ -148,7 +148,6 @@ const Parking = ({ lotId = 1 }) => {
         left: `${space.x}px`,
         width: `${space.width}px`,
         height: `${space.height}px`,
-        transform: `rotate(${space.rotation}deg)`,
       }}
       title={`Espacio ${space.id < 10 ? "0" + space.id : space.id} - ${
         space.status_id === 1
@@ -175,11 +174,11 @@ const Parking = ({ lotId = 1 }) => {
 
   const total = spaces.length;
   const occupied =
-    total > 0 ? spaces.filter((s) => s.status_id === 1).length : 0;
+    total > 0 ? spaces.filter((s) => s.status_id !== 2).length : 0;
   const occupancyPercentage = total ? Math.round((occupied / total) * 100) : 0;
 
   return (
-    <div className="container xl:mx-auto sm:mx-10 max-w-6xl w-full bg-white rounded-2xl shadow pb-6">
+    <div className="container xl:mx-auto sm:mx-10 max-w-8xl w-full bg-white rounded-2xl shadow pb-6">
       {/* ENCABEZADO */}
       <div className="flex items-center justify-between pt-6 ps-6 pe-6">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-1">
@@ -218,7 +217,7 @@ const Parking = ({ lotId = 1 }) => {
       </div>
 
       {/* DISTRIBUCIÓN DINÁMICA */}
-      <div className="relative w-full h-[520px] rounded-lg overflow-auto">
+      <div className="relative w-full h-[630px] rounded-lg overflow-auto">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
             <Loading />

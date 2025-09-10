@@ -1,8 +1,8 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./views/login/Login";
 import Home from "./views/home/Home";
 import "./App.css";
-import { useEffect } from "react";
 
 function App() {
   useEffect(() => {

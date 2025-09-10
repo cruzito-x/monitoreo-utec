@@ -7,7 +7,7 @@ import Top from "../../components/top/Top";
 
 const Home = () => {
   const location = useLocation();
-  const { carnet, user_name } = location.state || {};
+  const { carnet, user_name, role } = location.state || {};
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -23,9 +23,13 @@ const Home = () => {
             <Parking />
           </div>
 
-          <div className="w-full lg:max-w-sm">
-            <Stats />
-          </div>
+          <>
+            {role !== 1 && (
+              <div className="w-full lg:max-w-sm">
+                <Stats />
+              </div>
+            )}
+          </>
         </div>
       </main>
 

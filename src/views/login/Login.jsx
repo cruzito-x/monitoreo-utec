@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import $ from "jquery";
 import { IMaskInput } from "react-imask";
 import { Eye, EyeOff } from "lucide-react";
+import Swal from "sweetalert2";
+import $ from "jquery";
 import Button from "../../components/button/Button";
 import Footer from "../../components/footer/Footer";
 import Logo from "../../components/logo/Logo";
@@ -56,6 +56,7 @@ const Login = () => {
                 state: {
                   carnet: data.carnet,
                   user_name: data.user_name,
+                  role: data.role_id,
                 },
               });
             }

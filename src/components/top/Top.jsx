@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import Logo from "../../components/logo/Logo";
-import Logo2 from "../../components/logo/Logo2";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
+import $ from "jquery";
+import Logo from "../../components/logo/Logo";
+import Logo2 from "../../components/logo/Logo2";
 
 const Top = ({ carnet, user_name }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,9 +25,10 @@ const Top = ({ carnet, user_name }) => {
       }
     }
 
-    document.addEventListener("mousedown", dropdownClickOutside);
+    $(document).on("mousedown", dropdownClickOutside);
+
     return () => {
-      document.removeEventListener("mousedown", dropdownClickOutside);
+      $(document).off("mousedown", dropdownClickOutside);
     };
   }, []);
 

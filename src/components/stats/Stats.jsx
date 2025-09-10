@@ -53,7 +53,7 @@ const Stats = ({ lotId = 1 }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 w-11/12 bg-white rounded-2xl shadow p-6 mb-3">
+    <div className="grid grid-cols-1 gap-4 w-full bg-white rounded-2xl shadow p-6 mb-3">
       <h2 className="text-lg font-semibold text-gray-900">
         Estadísticas del Parqueo
       </h2>
