@@ -46,11 +46,24 @@ const Login = () => {
       if (response.status === 200) {
         Swal.fire({
           icon: "info",
-          text: `Bienvenid@ ${data.user_name}, a continuación se validará si posee vales de estacionamiento.`,
+          text:
+            data.role_id === 1
+              ? `Bienvenid@ ${data.user_name}, a continuación se validará si posee vales de estacionamiento.`
+              : `Bienvenid@ ${data.user_name}, ha iniciado sesión correctamente.`,
           confirmButtonColor: "var(--primary-color)",
           confirmButtonText: "Aceptar",
         }).then((result) => {
-          if (data.has_vouchers === 1) {
+          if (data.role_id === 1 && data.has_vouchers === 1) {
+            if (result.isConfirmed) {
+              navigate("/home", {
+                state: {
+                  carnet: data.carnet,
+                  user_name: data.user_name,
+                  role: data.role_id,
+                },
+              });
+            }
+          } else if (data.role_id !== 1) {
             if (result.isConfirmed) {
               navigate("/home", {
                 state: {

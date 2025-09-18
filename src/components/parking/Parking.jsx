@@ -114,11 +114,11 @@ const Parking = ({ lotId = 1 }) => {
   const getStatusIcon = (status_id) => {
     switch (status_id) {
       case 1:
-        return <Car className="h-4 w-4 text-red-600" />;
+        return <Car className="h-7 w-7 text-red-600" />;
       case 2:
-        return <CheckCircle className="h-4 w-4 text-emerald-600" />;
+        return <CheckCircle className="h-7 w-7 text-emerald-600" />;
       case 3:
-        return <AlertTriangle className="h-4 w-4 text-amber-600" />;
+        return <AlertTriangle className="h-7 w-7 text-amber-600" />;
       default:
         return null;
     }
@@ -141,7 +141,7 @@ const Parking = ({ lotId = 1 }) => {
     <div
       key={space.id}
       className={`absolute aspect-square rounded-lg border-2 flex flex-col items-center justify-center
-        transition-all duration-200 cursor-pointer hover:scale-105 text-xs
+        transition-all duration-200 cursor-pointer hover:scale-105 text-lg
         ${getStatusStyle(space.status_id)}`}
       style={{
         top: `${space.y}px`,
@@ -178,9 +178,9 @@ const Parking = ({ lotId = 1 }) => {
   const occupancyPercentage = total ? Math.round((occupied / total) * 100) : 0;
 
   return (
-    <div className="container xl:mx-auto sm:mx-10 max-w-8xl w-full bg-white rounded-2xl shadow pb-6">
+    <div className="container xl:mx-auto sm:mx-10 max-w-8xl w-full bg-white rounded-2xl shadow pb-6 px-4">
       {/* ENCABEZADO */}
-      <div className="flex items-center justify-between pt-6 ps-6 pe-6">
+      <div className="flex items-center justify-between pt-6 ps-5 pe-6">
         <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-1">
           Parqueo Estudiantil UTEC
           <span className="text-sm font-normal text-gray-500">
