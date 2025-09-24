@@ -99,7 +99,6 @@ const Parking = ({ lotId = 1 }) => {
     };
 
     socket.onerror = () => {
-      console.error("WebSocket error occurred");
       setTransmitionStatus(false);
     };
 

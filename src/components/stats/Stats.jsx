@@ -14,26 +14,58 @@ const Stats = ({ lotId = 1 }) => {
       const data = await response.json();
       if (response.status === 200) {
         setSummary(data);
-        console.log("Popular spaces fetched successfully:", data);
       } else {
-        console.error("Error fetching popular spaces:", data);
+        console.error("Error fetching daily summary:", data);
       }
+    } catch (error) {
+      console.error("Error fetching daily summary:", error);
+    }
+  };
+
+  const fetchPopularSpaces = async () => {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/top-used/${lotId}/`);
+      const data = await res.json();
+      setPopularSpaces(data);
     } catch (error) {
       console.error("Error fetching popular spaces:", error);
     }
   };
 
-  const fetchPopularSpaces = async () => {
-    const res = await fetch(`http://127.0.0.1:8000/api/top-used/${lotId}/`);
-    const data = await res.json();
-    setPopularSpaces(data);
-  };
-
   useEffect(() => {
+    // Fetch inicial
     fetchDailySummary();
     fetchPopularSpaces();
     setLoading(false);
-  }, []);
+
+    // WebSocket para actualizaciones en tiempo real
+    const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
+
+    socket.onopen = () => {
+      console.log("📡 Stats conectado al WebSocket");
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("📡 Stats recibió update:", data);
+
+      // Cada vez que llegue un update de un espacio → recargar stats
+      fetchDailySummary();
+      fetchPopularSpaces();
+    };
+
+    socket.onerror = (error) => {
+      console.error("❌ WebSocket error en Stats:", error);
+    };
+
+    socket.onclose = () => {
+      console.log("🔌 Stats WebSocket cerrado");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [lotId]);
 
   const getIcon = (index) => {
     switch (index) {

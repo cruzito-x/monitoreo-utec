@@ -5,24 +5,35 @@ import Swal from "sweetalert2";
 const Cards = () => {
   const [status, setStatus] = useState([]);
 
+  // función para actualizar los contadores
+  const updateStatusCounts = (newSpace) => {
+    setStatus((prev) => {
+      // copio el arreglo anterior como mapa de status_id → count
+      const counts = {
+        1: prev.find((s) => s.status === "ocupado")?.count || 0,
+        2: prev.find((s) => s.status === "disponible")?.count || 0,
+        3: prev.find((s) => s.status === "obstruido")?.count || 0,
+      };
+
+      // restar 1 al estado anterior y sumar 1 al nuevo
+      // ⚠️ para esto necesitarías saber el estado anterior del espacio
+      // más simple: volver a pedir el resumen cada vez que llega un WS
+      return prev;
+    });
+  };
+
   useEffect(() => {
     const getParkingStatus = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/summary/`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "GET",
-        });
-
+        const response = await fetch(`http://127.0.0.1:8000/api/summary/`);
         const data = await response.json();
 
         if (response.status === 200) {
           setStatus(data);
-        } else if (response.status === 404 || response.status === 500) {
+        } else {
           Swal.fire({
             icon: "warning",
-            text: "Ha ocurrido un error al obtener la distribución del parqueo, por favor salga y vuelve a intentarlo.",
+            text: "Error al obtener la distribución del parqueo.",
             confirmButtonColor: "var(--primary-color)",
             confirmButtonText: "Aceptar",
           });
@@ -33,11 +44,41 @@ const Cards = () => {
     };
 
     getParkingStatus();
+
+    // 🔌 WebSocket para actualizaciones en tiempo real
+    const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
+
+    socket.onopen = () => {
+      console.log("Conectado a WebSocket en Cards.jsx");
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("📡 Evento recibido:", data);
+
+      // opción A: recalcular todo el resumen desde la API
+      getParkingStatus();
+
+      // opción B (optimizada): actualizar los contadores en memoria
+      // updateStatusCounts(data);
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket cerrado");
+    };
+
+    return () => {
+      socket.close();
+    };
   }, []);
 
   const cardData = [
     {
-      number: status[2]?.count || 0,
+      number: status.find((s) => s.status === "ocupado")?.count || 0,
       label: "Ocupados",
       description: "Espacios en uso",
       icon: <Car className="text-rose-600" size={20} />,
@@ -46,7 +87,7 @@ const Cards = () => {
       bgColor: "bg-rose-50",
     },
     {
-      number: status[0]?.count || 0,
+      number: status.find((s) => s.status === "disponible")?.count || 0,
       label: "Disponibles",
       description: "Espacios libres",
       icon: <CheckCircle className="text-emerald-600" size={20} />,
@@ -55,7 +96,7 @@ const Cards = () => {
       bgColor: "bg-emerald-50",
     },
     {
-      number: status[1]?.count || 0,
+      number: status.find((s) => s.status === "obstruido")?.count || 0,
       label: "Obstruidos",
       description: "Requiere atención",
       icon: <AlertTriangle className="text-amber-600" size={20} />,
@@ -68,8 +109,7 @@ const Cards = () => {
   return (
     <div className="grid grid-cols-1 gap-5 w-full mb-12 bg-white rounded-2xl shadow p-7">
       <h2 className="text-lg font-semibold text-gray-900">
-        {" "}
-        Estado del Parqueo{" "}
+        Estado del Parqueo
       </h2>
       {cardData.map((card, index) => (
         <div
