@@ -75,8 +75,8 @@ const Login = () => {
             }
           } else {
             Swal.fire({
-              icon: "info",
-              text: "No posee vales de estacionamiento, por favor solicite uno en colecturía.",
+              icon: "error",
+              text: "No posee vales de estacionamiento, por favor solicite en colecturía.",
               confirmButtonColor: "var(--primary-color)",
               confirmButtonText: "Aceptar",
             }).then(() => {

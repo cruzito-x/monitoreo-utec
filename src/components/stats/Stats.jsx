@@ -1,5 +1,6 @@
 import { Crown, Star, Award, Medal, Circle } from "lucide-react";
 import { useEffect, useState } from "react";
+import moment from "moment";
 
 const Stats = ({ lotId = 1 }) => {
   const [loading, setLoading] = useState(true);
@@ -27,6 +28,7 @@ const Stats = ({ lotId = 1 }) => {
       const res = await fetch(`http://127.0.0.1:8000/api/top-used/${lotId}/`);
       const data = await res.json();
       setPopularSpaces(data);
+      console.log(" Daily summary:", data);
     } catch (error) {
       console.error("Error fetching popular spaces:", error);
     }
@@ -42,12 +44,12 @@ const Stats = ({ lotId = 1 }) => {
     const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
 
     socket.onopen = () => {
-      console.log("📡 Stats conectado al WebSocket");
+      console.log("Stats conectado al WebSocket");
     };
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("📡 Stats recibió update:", data);
+      console.log("Stats recibió update:", data);
 
       // Cada vez que llegue un update de un espacio → recargar stats
       fetchDailySummary();
@@ -55,11 +57,11 @@ const Stats = ({ lotId = 1 }) => {
     };
 
     socket.onerror = (error) => {
-      console.error("❌ WebSocket error en Stats:", error);
+      console.error("WebSocket error en Stats:", error);
     };
 
     socket.onclose = () => {
-      console.log("🔌 Stats WebSocket cerrado");
+      console.log("Stats WebSocket cerrado");
     };
 
     return () => {
@@ -81,6 +83,18 @@ const Stats = ({ lotId = 1 }) => {
         return <Circle className="w-5 h-5 text-rose-400 mr-2" />;
       default:
         return null;
+    }
+  };
+
+  const formatDuration = (seconds) => {
+    const duration = moment.duration(seconds, "seconds");
+
+    if (duration.asHours() >= 1) {
+      return `${Math.floor(duration.asHours())}h ${duration.minutes()}m`;
+    } else if (duration.asMinutes() >= 1) {
+      return `${duration.minutes()}m ${duration.seconds()}s`;
+    } else {
+      return `${duration.seconds()}s`;
     }
   };
 
@@ -110,7 +124,7 @@ const Stats = ({ lotId = 1 }) => {
                   </div>
                   <div className="text-right text-xs text-gray-600">
                     <p>Usado {space.usage} veces</p>
-                    <p>Tiempo Promedio: {space.avgTime}</p>
+                    <p>Tiempo Promedio: {formatDuration(space.avgUsedTime)}</p>
                   </div>
                 </div>
               </div>

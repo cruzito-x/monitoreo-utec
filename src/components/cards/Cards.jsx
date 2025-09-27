@@ -5,23 +5,6 @@ import Swal from "sweetalert2";
 const Cards = () => {
   const [status, setStatus] = useState([]);
 
-  // función para actualizar los contadores
-  const updateStatusCounts = (newSpace) => {
-    setStatus((prev) => {
-      // copio el arreglo anterior como mapa de status_id → count
-      const counts = {
-        1: prev.find((s) => s.status === "ocupado")?.count || 0,
-        2: prev.find((s) => s.status === "disponible")?.count || 0,
-        3: prev.find((s) => s.status === "obstruido")?.count || 0,
-      };
-
-      // restar 1 al estado anterior y sumar 1 al nuevo
-      // ⚠️ para esto necesitarías saber el estado anterior del espacio
-      // más simple: volver a pedir el resumen cada vez que llega un WS
-      return prev;
-    });
-  };
-
   useEffect(() => {
     const getParkingStatus = async () => {
       try {
@@ -45,22 +28,19 @@ const Cards = () => {
 
     getParkingStatus();
 
-    // 🔌 WebSocket para actualizaciones en tiempo real
+    // WebSocket para actualizaciones en tiempo real
     const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
 
     socket.onopen = () => {
-      console.log("Conectado a WebSocket en Cards.jsx");
+      console.log("Cards conectado al WebSocket");
     };
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log("📡 Evento recibido:", data);
 
-      // opción A: recalcular todo el resumen desde la API
+      // Recalcular todo el resumen desde la API
       getParkingStatus();
-
-      // opción B (optimizada): actualizar los contadores en memoria
-      // updateStatusCounts(data);
     };
 
     socket.onerror = (error) => {
