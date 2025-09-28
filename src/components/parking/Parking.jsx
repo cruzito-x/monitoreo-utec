@@ -16,6 +16,9 @@ const Parking = ({ lotId = 1 }) => {
   const [transmitionStatus, setTransmitionStatus] = useState(true);
 
   useEffect(() => {
+    let socket;
+    let reconnectTimeout;
+
     const getParkingDistribution = async () => {
       try {
         const response = await fetch(
@@ -24,7 +27,7 @@ const Parking = ({ lotId = 1 }) => {
             headers: {
               "Content-Type": "application/json",
             },
-            method: "GET",
+            method: "get",
           }
         );
         const data = await response.json();
@@ -48,66 +51,67 @@ const Parking = ({ lotId = 1 }) => {
       }
     };
 
+    const connectWebSocket = () => {
+      socket = new WebSocket("ws://localhost:8000/ws/parking/");
+
+      socket.onopen = () => {
+        setTransmitionStatus(true);
+      };
+
+      socket.onmessage = (event) => {
+        const incoming = JSON.parse(event.data);
+        const updatedSpaces = Array.isArray(incoming) ? incoming : [incoming];
+
+        setSpaces((prevSpaces) => {
+          const updated = [...prevSpaces];
+          updatedSpaces.forEach((incoming) => {
+            const index = updated.findIndex((s) => s.id === incoming.id);
+            if (index !== -1) updated[index] = incoming;
+          });
+          return updated;
+        });
+
+        if (
+          Notification.permission === "granted" &&
+          navigator.serviceWorker.controller
+        ) {
+          const space = updatedSpaces[0];
+          const title = `Espacio ${space.id < 10 ? "0" + space.id : space.id}`;
+          const statusText =
+            space.status_id === 1
+              ? "Ocupado"
+              : space.status_id === 2
+              ? "Disponible"
+              : "Obstruido";
+
+          navigator.serviceWorker.controller.postMessage({
+            title: "Parqueo UTEC",
+            options: {
+              body: `${title} ahora está ${statusText.toLowerCase()}.`,
+              icon: "/logo.png",
+              badge: "/logo.png",
+              vibrate: [100, 50, 100],
+            },
+          });
+        }
+      };
+
+      socket.onerror = () => setTransmitionStatus(false);
+
+      socket.onclose = () => {
+        setTransmitionStatus(false);
+        // Intenta reconectar al WebSocket después de 3 segundos
+        reconnectTimeout = setTimeout(connectWebSocket, 3000);
+      };
+    };
+
     getParkingDistribution();
+    connectWebSocket();
 
-    // WebSocket connection to receive live updates
-    const socket = new WebSocket("ws://localhost:8000/ws/parking/");
-
-    socket.onmessage = (event) => {
-      const incoming = JSON.parse(event.data);
-      const updatedSpaces = Array.isArray(incoming) ? incoming : [incoming];
-
-      setSpaces((prevSpaces) => {
-        const updated = [...prevSpaces];
-        updatedSpaces.forEach((incoming) => {
-          const index = updated.findIndex(
-            (status) => status.id === incoming.id
-          );
-          if (index !== -1) {
-            updated[index] = incoming;
-          }
-        });
-        return updated;
-      });
-
-      // Show notification if permission is granted and a service worker is available
-      if (
-        Notification.permission === "granted" &&
-        navigator.serviceWorker.controller
-      ) {
-        const space = updatedSpaces[0];
-        const title = `Espacio ${space.id < 10 ? "0" + space.id : space.id}`;
-        const statusText =
-          space.status_id === 1
-            ? "Ocupado"
-            : space.status_id === 2
-            ? "Disponible"
-            : "Obstruido";
-
-        navigator.serviceWorker.controller.postMessage({
-          title: "Parqueo UTEC",
-          options: {
-            body: `${title} ahora está ${statusText.toLowerCase()}.`,
-            icon: "/logo.png",
-            badge: "/logo.png",
-            vibrate: [100, 50, 100],
-          },
-        });
-      }
-
-      setTransmitionStatus(true);
+    return () => {
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
+      if (socket) socket.close();
     };
-
-    socket.onerror = () => {
-      setTransmitionStatus(false);
-    };
-
-    socket.onclose = () => {
-      setTransmitionStatus(false);
-    };
-
-    // Clear WebSocket connection on component unmount
-    return () => socket.close();
   }, [lotId]);
 
   const getStatusIcon = (status_id) => {
@@ -180,7 +184,6 @@ const Parking = ({ lotId = 1 }) => {
     <div className="container mx-auto w-full max-w-full bg-white rounded-2xl shadow pb-6 mb-6 px-4">
       {/* ENCABEZADO */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 ps-5 pe-6 gap-3">
-        {/* TÍTULO */}
         <h2 className="lg:text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
           Parqueo Estudiantil UTEC
           <span className="text-sm font-normal text-gray-500">
@@ -188,9 +191,7 @@ const Parking = ({ lotId = 1 }) => {
           </span>
         </h2>
 
-        {/* Indicadores */}
         <div className="flex flex-row flex-wrap items-center gap-3 sm:gap-4">
-          {/* % DE OCUPACIÓN */}
           <div
             className={`flex items-center gap-1 ${
               occupancyPercentage < 75 ? "text-cyan-600" : "text-red-600"
@@ -202,7 +203,6 @@ const Parking = ({ lotId = 1 }) => {
             </span>
           </div>
 
-          {/* ESTADO DE TRANSMISIÓN */}
           <div className="flex items-center gap-1">
             {transmitionStatus ? (
               <Wifi className="h-4 w-4 animate-pulse text-green-600" />
@@ -227,7 +227,6 @@ const Parking = ({ lotId = 1 }) => {
             <Loading />
           </div>
         ) : total > 0 ? (
-          // Wrapper con tamaño dinámico
           <div
             className="relative"
             style={{
