@@ -37,7 +37,7 @@ const Cards = () => {
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("📡 Evento recibido:", data);
+      console.log("Evento recibido:", data);
 
       // Recalcular todo el resumen desde la API
       getParkingStatus();
