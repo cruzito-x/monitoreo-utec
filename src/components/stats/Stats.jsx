@@ -1,3 +1,4 @@
+// src/components/Stats.jsx
 import { Crown, Star, Award, Medal, Circle } from "lucide-react";
 import { useEffect, useState } from "react";
 import moment from "moment";
@@ -28,45 +29,27 @@ const Stats = ({ lotId = 1 }) => {
       const res = await fetch(`http://127.0.0.1:8000/api/top-used/${lotId}/`);
       const data = await res.json();
       setPopularSpaces(data);
-      console.log(" Daily summary:", data);
     } catch (error) {
       console.error("Error fetching popular spaces:", error);
     }
   };
 
   useEffect(() => {
-    // Fetch inicial
     fetchDailySummary();
     fetchPopularSpaces();
     setLoading(false);
 
-    // WebSocket para actualizaciones en tiempo real
     const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
-
-    socket.onopen = () => {
-      console.log("Stats conectado al WebSocket");
-    };
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("Stats recibió update:", data);
-
-      // Cada vez que llegue un update de un espacio → recargar stats
+    socket.onopen = () => console.log("Stats conectado al WebSocket");
+    socket.onmessage = () => {
       fetchDailySummary();
       fetchPopularSpaces();
     };
-
-    socket.onerror = (error) => {
+    socket.onerror = (error) =>
       console.error("WebSocket error en Stats:", error);
-    };
+    socket.onclose = () => console.log("Stats WebSocket cerrado");
 
-    socket.onclose = () => {
-      console.log("Stats WebSocket cerrado");
-    };
-
-    return () => {
-      socket.close();
-    };
+    return () => socket.close();
   }, [lotId]);
 
   const getIcon = (index) => {
@@ -88,7 +71,6 @@ const Stats = ({ lotId = 1 }) => {
 
   const formatDuration = (seconds) => {
     const duration = moment.duration(seconds, "seconds");
-
     if (duration.asHours() >= 1) {
       return `${Math.floor(duration.asHours())}h ${duration.minutes()}m`;
     } else if (duration.asMinutes() >= 1) {
@@ -99,33 +81,26 @@ const Stats = ({ lotId = 1 }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 w-full bg-white rounded-2xl shadow p-6 mb-3">
-      <h2 className="text-lg font-semibold text-gray-900">
-        Estadísticas del Parqueo
-      </h2>
-
-      <div className="max-w-2xl flex flex-col">
-        <div className="flex justify-between items-center">
-          <h2 className="text-sm font-semibold text-gray-900">
-            Top 5 Espacios Más Usados
-          </h2>
-        </div>
+    <div className="flex flex-col gap-4 w-full mb-3">
+      {/* Card 1: Top 5 Espacios */}
+      <div className="bg-white rounded-2xl shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Top 5 Espacios Más Usados
+        </h2>
 
         {popularSpaces.length > 0 ? (
           <div className="mt-4 space-y-4">
             {popularSpaces.map((space, index) => (
-              <div key={space.id} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    {getIcon(index)}
-                    <h3 className="font-light text-sm text-gray-900">
-                      {space.name}
-                    </h3>
-                  </div>
-                  <div className="text-right text-xs text-gray-600">
-                    <p>Usado {space.usage} veces</p>
-                    <p>Tiempo Promedio: {formatDuration(space.avgUsedTime)}</p>
-                  </div>
+              <div key={space.id} className="flex justify-between items-center">
+                <div className="flex items-center">
+                  {getIcon(index)}
+                  <h3 className="font-light text-sm text-gray-900">
+                    {space.name}
+                  </h3>
+                </div>
+                <div className="text-right text-xs text-gray-600">
+                  <p>Usado {space.usage} veces</p>
+                  <p>Tiempo Promedio: {formatDuration(space.avgUsedTime)}</p>
                 </div>
               </div>
             ))}
@@ -135,14 +110,13 @@ const Stats = ({ lotId = 1 }) => {
             No hay datos disponibles
           </div>
         )}
+      </div>
 
-        <div className="border-b pt-4 border-gray-300"></div>
+      {/* Card 2: Resumen del día */}
+      <div className="bg-white rounded-2xl shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900">Resumen del día</h2>
 
-        <h2 className="mt-5 text-sm font-semibold text-gray-900">
-          Resumen del día
-        </h2>
-
-        {summary && (
+        {summary ? (
           <div className="pt-6 pb-6 space-y-4 text-sm text-gray-700">
             <div className="flex justify-between">
               <span className="text-gray-900">Ingresos:</span>
@@ -173,6 +147,10 @@ const Stats = ({ lotId = 1 }) => {
                 {summary.currentParked} autos
               </span>
             </div>
+          </div>
+        ) : (
+          <div className="text-gray-500 mt-4 mb-2 text-sm flex justify-center">
+            No hay datos disponibles
           </div>
         )}
       </div>

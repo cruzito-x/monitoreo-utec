@@ -87,7 +87,7 @@ const Cards = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-5 w-full mb-12 bg-white rounded-2xl shadow p-7">
+    <div className="grid grid-cols-1 gap-5 w-full bg-white rounded-2xl shadow p-7">
       <h2 className="text-lg font-semibold text-gray-900">
         Estado del Parqueo
       </h2>

@@ -177,16 +177,20 @@ const Parking = ({ lotId = 1 }) => {
   const occupancyPercentage = total ? Math.round((occupied / total) * 100) : 0;
 
   return (
-    <div className="container xl:mx-auto sm:mx-10 max-w-8xl w-full bg-white rounded-2xl shadow pb-6 px-4">
+    <div className="container mx-auto w-full max-w-full bg-white rounded-2xl shadow pb-6 mb-6 px-4">
       {/* ENCABEZADO */}
-      <div className="flex items-center justify-between pt-6 ps-5 pe-6">
-        <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-1">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 ps-5 pe-6 gap-3">
+        {/* TÍTULO */}
+        <h2 className="lg:text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
           Parqueo Estudiantil UTEC
           <span className="text-sm font-normal text-gray-500">
             ({total > 0 ? total : 0} espacios)
           </span>
         </h2>
-        <div className="flex items-center gap-4">
+
+        {/* Indicadores */}
+        <div className="flex flex-row flex-wrap items-center gap-3 sm:gap-4">
+          {/* % DE OCUPACIÓN */}
           <div
             className={`flex items-center gap-1 ${
               occupancyPercentage < 75 ? "text-cyan-600" : "text-red-600"
@@ -197,6 +201,8 @@ const Parking = ({ lotId = 1 }) => {
               {occupancyPercentage > 0 ? occupancyPercentage : 0}% ocupado
             </span>
           </div>
+
+          {/* ESTADO DE TRANSMISIÓN */}
           <div className="flex items-center gap-1">
             {transmitionStatus ? (
               <Wifi className="h-4 w-4 animate-pulse text-green-600" />
@@ -204,7 +210,6 @@ const Parking = ({ lotId = 1 }) => {
               <WifiOff className="h-4 w-4 animate-pulse text-red-600" />
             )}
             <span className="text-xs font-medium">
-              {" "}
               {transmitionStatus ? (
                 <span className="text-green-600"> En Vivo </span>
               ) : (
@@ -216,13 +221,22 @@ const Parking = ({ lotId = 1 }) => {
       </div>
 
       {/* DISTRIBUCIÓN DINÁMICA */}
-      <div className="relative w-full h-[630px] rounded-lg overflow-auto">
+      <div className="relative w-full max-h-[59vh] h-[450px] sm:h-[630px] rounded-lg overflow-auto">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
             <Loading />
           </div>
         ) : total > 0 ? (
-          spaces.map(renderSpace)
+          // Wrapper con tamaño dinámico
+          <div
+            className="relative"
+            style={{
+              width: Math.max(...spaces.map((s) => s.x + s.width), 0) + "px",
+              height: Math.max(...spaces.map((s) => s.y + s.height), 0) + "px",
+            }}
+          >
+            {spaces.map(renderSpace)}
+          </div>
         ) : null}
       </div>
     </div>
