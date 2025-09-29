@@ -28,7 +28,7 @@ const Cards = () => {
 
     getParkingStatus();
 
-    // WebSocket para actualizaciones en tiempo real
+    // WebSocket to make updates in real time
     const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
 
     socket.onopen = () => {
@@ -39,7 +39,7 @@ const Cards = () => {
       const data = JSON.parse(event.data);
       console.log("Evento recibido:", data);
 
-      // Recalcular todo el resumen desde la API
+      // Recalculate the entire summary from the API
       getParkingStatus();
     };
 

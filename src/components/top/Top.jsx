@@ -32,7 +32,7 @@ const Top = ({ carnet, user_name }) => {
     };
   }, []);
 
-  // Función para obtener iniciales (primer nombre + primer apellido)
+  // Function to get initials (first name + first surname)
   const getInitials = (fullName) => {
     if (!fullName) return "";
     const parts = fullName.trim().split(" ");

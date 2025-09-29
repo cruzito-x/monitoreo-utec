@@ -100,7 +100,7 @@ const Parking = ({ lotId = 1 }) => {
 
       socket.onclose = () => {
         setTransmitionStatus(false);
-        // Intenta reconectar al WebSocket después de 3 segundos
+        // Try to reconnect to the WebSocket after 3 seconds
         reconnectTimeout = setTimeout(connectWebSocket, 3000);
       };
     };
@@ -221,7 +221,7 @@ const Parking = ({ lotId = 1 }) => {
       </div>
 
       {/* DISTRIBUCIÓN DINÁMICA */}
-      <div className="relative w-full max-h-[59vh] h-[450px] sm:h-[630px] rounded-lg overflow-auto">
+      <div className="relative w-full max-h-[65vh] h-[450px] sm:h-[630px] rounded-lg overflow-auto">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
             <Loading />

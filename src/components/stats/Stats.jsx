@@ -1,4 +1,3 @@
-// src/components/Stats.jsx
 import { Crown, Star, Award, Medal, Circle } from "lucide-react";
 import { useEffect, useState } from "react";
 import moment from "moment";
@@ -40,13 +39,17 @@ const Stats = ({ lotId = 1 }) => {
     setLoading(false);
 
     const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
+
     socket.onopen = () => console.log("Stats conectado al WebSocket");
+
     socket.onmessage = () => {
       fetchDailySummary();
       fetchPopularSpaces();
     };
+
     socket.onerror = (error) =>
       console.error("WebSocket error en Stats:", error);
+
     socket.onclose = () => console.log("Stats WebSocket cerrado");
 
     return () => socket.close();

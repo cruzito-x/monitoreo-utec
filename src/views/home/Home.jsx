@@ -15,7 +15,7 @@ const Home = () => {
 
       <main className="flex-1 px-4 sm:px-6 lg:px-8 xl:px-4 mt-5">
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-5">
-          <div className="w-full lg:max-w-sm">
+          <div className="w-full lg:max-w-xs">
             <Cards />
           </div>
 
@@ -25,7 +25,7 @@ const Home = () => {
 
           <>
             {role !== 1 && (
-              <div className="w-full lg:max-w-sm">
+              <div className="w-full lg:max-w-xs">
                 <Stats />
               </div>
             )}
