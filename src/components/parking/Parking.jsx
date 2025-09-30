@@ -19,7 +19,7 @@ const Parking = ({ lotId = 1 }) => {
     let socket;
     let reconnectTimeout;
 
-    const getParkingDistribution = async () => {
+    const getParkingSpacesDistribution = async () => {
       try {
         const response = await fetch(
           `http://127.0.0.1:8000/api/parking-lot/${lotId}/spaces/`,
@@ -56,27 +56,39 @@ const Parking = ({ lotId = 1 }) => {
 
       socket.onopen = () => {
         setTransmitionStatus(true);
+        getParkingSpacesDistribution(); // Fetch initial data on connection open
       };
 
       socket.onmessage = (event) => {
-        const incoming = JSON.parse(event.data);
-        const updatedSpaces = Array.isArray(incoming) ? incoming : [incoming];
+        let incoming = JSON.parse(event.data);
+        let updatedSpaces = Array.isArray(incoming) ? incoming : [incoming];
 
         setSpaces((prevSpaces) => {
-          const updated = [...prevSpaces];
+          let updated = [...prevSpaces];
+
           updatedSpaces.forEach((incoming) => {
-            const index = updated.findIndex((s) => s.id === incoming.id);
-            if (index !== -1) updated[index] = incoming;
+            let index = updated.findIndex((s) => s.id === incoming.id);
+
+            if (index !== -1) {
+              updated[index] = incoming;
+            } else {
+              updated.push(incoming); // Add new spaces if they aren't exists
+            }
           });
+
           return updated;
         });
+
+        setTransmitionStatus(true);
 
         if (
           Notification.permission === "granted" &&
           navigator.serviceWorker.controller
         ) {
           const space = updatedSpaces[0];
-          const title = `Espacio ${space.id < 10 ? "0" + space.id : space.id}`;
+
+          let title = `Espacio ${space.id < 10 ? "0" + space.id : space.id}`;
+
           const statusText =
             space.status_id === 1
               ? "Ocupado"
@@ -100,12 +112,12 @@ const Parking = ({ lotId = 1 }) => {
 
       socket.onclose = () => {
         setTransmitionStatus(false);
-        // Try to reconnect to the WebSocket after 3 seconds
-        reconnectTimeout = setTimeout(connectWebSocket, 3000);
+
+        reconnectTimeout = setTimeout(connectWebSocket, 3000); // Try to reconnect to the WebSocket after 3 seconds
       };
     };
 
-    getParkingDistribution();
+    getParkingSpacesDistribution();
     connectWebSocket();
 
     return () => {
@@ -220,15 +232,15 @@ const Parking = ({ lotId = 1 }) => {
         </div>
       </div>
 
-      {/* DISTRIBUCIÓN DINÁMICA */}
+      {/* DINAMIC DISTRIBUTION */}
       <div className="relative w-full max-h-[65vh] h-[450px] sm:h-[630px] rounded-lg overflow-auto">
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+          <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
             <Loading />
           </div>
-        ) : total > 0 ? (
+        ) : spaces.length > 0 ? (
           <div
-            className="relative"
+            className="relative w-full h-full"
             style={{
               width: Math.max(...spaces.map((s) => s.x + s.width), 0) + "px",
               height: Math.max(...spaces.map((s) => s.y + s.height), 0) + "px",
@@ -236,7 +248,11 @@ const Parking = ({ lotId = 1 }) => {
           >
             {spaces.map(renderSpace)}
           </div>
-        ) : null}
+        ) : (
+          <div className="flex items-center justify-center w-full h-full text-gray-400">
+            No hay datos disponibles
+          </div>
+        )}
       </div>
     </div>
   );

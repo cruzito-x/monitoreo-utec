@@ -1,58 +1,83 @@
 import { Crown, Star, Award, Medal, Circle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import moment from "moment";
+import Loading from "../loading/Loading";
 
 const Stats = ({ lotId = 1 }) => {
-  const [loading, setLoading] = useState(true);
+  const [loadingPopular, setLoadingPopular] = useState(true);
+  const [loadingSummary, setLoadingSummary] = useState(true);
   const [popularSpaces, setPopularSpaces] = useState([]);
   const [summary, setSummary] = useState(null);
 
-  const fetchDailySummary = async () => {
+  const socketRef = useRef(null);
+  const reconnectTimeoutRef = useRef(null);
+
+  const getDailySummary = async () => {
+    setLoadingSummary(true);
     try {
       const response = await fetch(
         `http://127.0.0.1:8000/api/daily-summary/${lotId}`
       );
-      const data = await response.json();
+
+      let data = await response.json();
+
       if (response.status === 200) {
         setSummary(data);
-      } else {
-        console.error("Error fetching daily summary:", data);
       }
     } catch (error) {
-      console.error("Error fetching daily summary:", error);
+    } finally {
+      setLoadingSummary(false);
     }
   };
 
-  const fetchPopularSpaces = async () => {
+  const getTopSpaces = async () => {
+    setLoadingPopular(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/top-used/${lotId}/`);
-      const data = await res.json();
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/top-used/${lotId}/`
+      );
+
+      let data = await response.json();
       setPopularSpaces(data);
     } catch (error) {
-      console.error("Error fetching popular spaces:", error);
+    } finally {
+      setLoadingPopular(false);
     }
+  };
+
+  const getSumamryData = async () => {
+    await getDailySummary();
+    await getTopSpaces();
   };
 
   useEffect(() => {
-    fetchDailySummary();
-    fetchPopularSpaces();
-    setLoading(false);
+    getSumamryData();
 
-    const socket = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
+    const connectWebSocket = () => {
+      socketRef.current = new WebSocket("ws://127.0.0.1:8000/ws/parking/");
 
-    socket.onopen = () => console.log("Stats conectado al WebSocket");
+      socketRef.current.onopen = () => {
+        getSumamryData(); // Reload data on connection open
+      };
 
-    socket.onmessage = () => {
-      fetchDailySummary();
-      fetchPopularSpaces();
+      socketRef.current.onmessage = () => {
+        getSumamryData(); // Reload data on every message
+      };
+
+      socketRef.current.onerror = () => {};
+
+      socketRef.current.onclose = () => {
+        reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
+      };
     };
 
-    socket.onerror = (error) =>
-      console.error("WebSocket error en Stats:", error);
+    connectWebSocket();
 
-    socket.onclose = () => console.log("Stats WebSocket cerrado");
-
-    return () => socket.close();
+    return () => {
+      if (reconnectTimeoutRef.current)
+        clearTimeout(reconnectTimeoutRef.current);
+      if (socketRef.current) socketRef.current.close();
+    };
   }, [lotId]);
 
   const getIcon = (index) => {
@@ -74,24 +99,26 @@ const Stats = ({ lotId = 1 }) => {
 
   const formatDuration = (seconds) => {
     const duration = moment.duration(seconds, "seconds");
-    if (duration.asHours() >= 1) {
+    if (duration.asHours() >= 1)
       return `${Math.floor(duration.asHours())}h ${duration.minutes()}m`;
-    } else if (duration.asMinutes() >= 1) {
+    if (duration.asMinutes() >= 1)
       return `${duration.minutes()}m ${duration.seconds()}s`;
-    } else {
-      return `${duration.seconds()}s`;
-    }
+    return `${duration.seconds()}s`;
   };
 
   return (
     <div className="flex flex-col gap-4 w-full mb-3">
-      {/* Card 1: Top 5 Espacios */}
+      {/* Top 5 spaces */}
       <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="lg:text-lg sm:text-xl font-semibold text-gray-800">
           Top 5 Espacios Más Usados
         </h2>
 
-        {popularSpaces.length > 0 ? (
+        {loadingPopular ? (
+          <div className="mt-4 flex justify-center items-center h-64">
+            <Loading />
+          </div>
+        ) : popularSpaces.length > 0 ? (
           <div className="mt-4 space-y-4">
             {popularSpaces.map((space, index) => (
               <div key={space.id} className="flex justify-between items-center">
@@ -115,11 +142,17 @@ const Stats = ({ lotId = 1 }) => {
         )}
       </div>
 
-      {/* Card 2: Resumen del día */}
+      {/* Daily Summary */}
       <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900">Resumen del día</h2>
+        <h2 className="lg:text-lg sm:text-xl font-semibold text-gray-900">
+          Resumen del día
+        </h2>
 
-        {summary ? (
+        {loadingSummary ? (
+          <div className="mt-4 flex justify-center items-center h-64">
+            <Loading />
+          </div>
+        ) : summary ? (
           <div className="pt-6 pb-6 space-y-4 text-sm text-gray-700">
             <div className="flex justify-between">
               <span className="text-gray-900">Ingresos:</span>
@@ -127,23 +160,19 @@ const Stats = ({ lotId = 1 }) => {
                 {summary.entries} autos
               </span>
             </div>
-
             <div className="flex justify-between">
               <span className="text-gray-900">Salidas:</span>
               <span className="text-red-500 font-semibold">
                 {summary.exits} autos
               </span>
             </div>
-
             <div className="flex justify-between">
               <span className="text-gray-900">Estancia promedio:</span>
               <span className="text-amber-500 font-semibold">
                 {summary.avgStay}
               </span>
             </div>
-
             <hr className="my-2 border-gray-200" />
-
             <div className="flex justify-between">
               <span className="text-gray-900">Estacionados actualmente:</span>
               <span className="text-rose-900 font-semibold">
