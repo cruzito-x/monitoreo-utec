@@ -45,7 +45,15 @@ const Parking = ({ lotId = 1 }) => {
         }
       } catch (error) {
         setTransmitionStatus(false);
-        console.error("Error al obtener distribución del parqueo:", error);
+        navigator.serviceWorker.controller.postMessage({
+          title: "Parqueo UTEC",
+          options: {
+            body: "Ha ocurrido un error inesperado, por favor intente de nuevo.",
+            icon: "/logo.png",
+            badge: "/logo.png",
+            vibrate: [100, 50, 100],
+          },
+        });
       } finally {
         setLoading(false);
       }

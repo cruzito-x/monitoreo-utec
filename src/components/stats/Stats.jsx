@@ -24,6 +24,8 @@ const Stats = ({ lotId = 1 }) => {
       if (response.status === 200) {
         setSummary(data);
       }
+
+      console.log("data => ", data);
     } catch (error) {
     } finally {
       setLoadingSummary(false);
@@ -40,6 +42,15 @@ const Stats = ({ lotId = 1 }) => {
       let data = await response.json();
       setPopularSpaces(data);
     } catch (error) {
+      navigator.serviceWorker.controller.postMessage({
+        title: "Parqueo UTEC",
+        options: {
+          body: "Ha ocurrido un error inesperado, por favor intente de nuevo.",
+          icon: "/logo.png",
+          badge: "/logo.png",
+          vibrate: [100, 50, 100],
+        },
+      });
     } finally {
       setLoadingPopular(false);
     }
@@ -111,15 +122,18 @@ const Stats = ({ lotId = 1 }) => {
       {/* Top 5 spaces */}
       <div className="bg-white rounded-2xl shadow p-6">
         <h2 className="lg:text-lg sm:text-xl font-semibold text-gray-800">
-          Top 5 Espacios Más Usados
+          Top 5 Espacios Más Usados <br />
+          <span className="text-xs text-gray-500 font-normal">
+            Hoy: {moment().format("DD/MM/YYYY")}
+          </span>
         </h2>
 
         {loadingPopular ? (
-          <div className="mt-4 flex justify-center items-center h-64">
+          <div className="mt-2 flex justify-center items-center h-64">
             <Loading />
           </div>
         ) : popularSpaces.length > 0 ? (
-          <div className="mt-4 space-y-4">
+          <div className="mt-2 space-y-3">
             {popularSpaces.map((space, index) => (
               <div key={space.id} className="flex justify-between items-center">
                 <div className="flex items-center">
@@ -146,14 +160,18 @@ const Stats = ({ lotId = 1 }) => {
       <div className="bg-white rounded-2xl shadow p-6">
         <h2 className="lg:text-lg sm:text-xl font-semibold text-gray-900">
           Resumen del día
+          <br />
+          <span className="text-xs text-gray-500 font-normal">
+            Hoy: {moment().format("DD/MM/YYYY")}
+          </span>
         </h2>
 
         {loadingSummary ? (
-          <div className="mt-4 flex justify-center items-center h-64">
+          <div className="mt-2 flex justify-center items-center h-64">
             <Loading />
           </div>
-        ) : summary ? (
-          <div className="pt-6 pb-6 space-y-4 text-sm text-gray-700">
+        ) : summary && !Array.isArray(summary) ? (
+          <div className="mt-2 pb-6 space-y-4 text-sm text-gray-700">
             <div className="flex justify-between">
               <span className="text-gray-900">Ingresos:</span>
               <span className="text-blue-500 font-semibold">
